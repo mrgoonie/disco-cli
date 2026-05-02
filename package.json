@@ -35,6 +35,15 @@
     "automation"
   ],
   "license": "MIT",
+  "author": "mrgoonie",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrgoonie/disco-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mrgoonie/disco-cli/issues"
+  },
+  "homepage": "https://github.com/mrgoonie/disco-cli#readme",
   "engines": {
     "node": ">=18.17"
   },
