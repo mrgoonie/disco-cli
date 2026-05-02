@@ -1,0 +1,18 @@
+[
+  {
+    "name": "ping",
+    "description": "Replies with pong"
+  },
+  {
+    "name": "echo",
+    "description": "Echo your text",
+    "options": [
+      {
+        "name": "text",
+        "description": "Text to echo",
+        "type": 3,
+        "required": true
+      }
+    ]
+  }
+]
