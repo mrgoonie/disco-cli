@@ -63,21 +63,21 @@ Tokens are never logged. `disco doctor` shows which layer resolved the token.
 
 | Group     | Commands                                                                                |
 |-----------|-----------------------------------------------------------------------------------------|
-| Auth      | `login`, `logout`, `whoami`, `doctor`, `config get|set`                                 |
+| Auth      | `login`, `logout`, `whoami`, `doctor`, `config get\|set`                                |
 | Listen    | `listen`                                                                                |
-| Guild     | `guild list|info|leave|edit`                                                            |
-| Channel   | `channel list|info|create|edit|delete`                                                  |
-| Message   | `message send|edit|delete|list|react|pin|unpin`                                         |
-| Member    | `member list|info|kick|ban|unban|timeout|set-nickname|ban-list`                         |
-| Role      | `role list|create|edit|delete|assign|remove`                                            |
-| Thread    | `thread create|list|archive|unarchive|join|leave`                                       |
-| Webhook   | `webhook list|create|delete|send`                                                       |
-| Invite    | `invite list|create|delete`                                                             |
-| Emoji     | `emoji list|create|delete`                                                              |
-| Sticker   | `sticker list|create|delete`                                                            |
-| Commands  | `command list|register|delete|sync` (application/slash)                                 |
-| Events    | `event list|create|delete` (guild scheduled events)                                     |
-| AutoMod   | `automod list|create|delete`                                                            |
+| Guild     | `guild list\|info\|leave\|edit`                                                         |
+| Channel   | `channel list\|info\|create\|edit\|delete`                                              |
+| Message   | `message send\|edit\|delete\|list\|react\|pin\|unpin`                                   |
+| Member    | `member list\|info\|kick\|ban\|unban\|timeout\|set-nickname\|ban-list`                  |
+| Role      | `role list\|create\|edit\|delete\|assign\|remove`                                       |
+| Thread    | `thread create\|list\|archive\|unarchive\|join\|leave`                                  |
+| Webhook   | `webhook list\|create\|delete\|send`                                                    |
+| Invite    | `invite list\|create\|delete`                                                           |
+| Emoji     | `emoji list\|create\|delete`                                                            |
+| Sticker   | `sticker list\|create\|delete`                                                          |
+| Commands  | `command list\|register\|delete\|sync` (application/slash)                              |
+| Events    | `event list\|create\|delete` (guild scheduled events)                                   |
+| AutoMod   | `automod list\|create\|delete`                                                          |
 
 Run `disco <group> --help` for full flags.
 
