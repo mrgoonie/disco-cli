@@ -3,6 +3,7 @@
 export * from "./errors.js";
 export * from "./config.js";
 export * from "./client.js";
+export * from "./gateway.js";
 export * from "./serialize.js";
 export * as guilds from "./guilds.js";
 export * as channels from "./channels.js";

@@ -1,6 +1,6 @@
 // Guild member management: list/info/kick/ban/unban/timeout/nickname.
 
-import type { Client } from "discord.js";
+import { Routes, type Client, type GuildMember } from "discord.js";
 import { fetchGuildOrThrow } from "./client.js";
 import { serializeMember } from "./serialize.js";
 import { DiscoError, wrapDiscordError } from "./errors.js";
@@ -12,10 +12,19 @@ export async function listMembers(
 ) {
   const g = await fetchGuildOrThrow(client, guildId);
   try {
-    const members = opts.query
-      ? await g.members.search({ query: opts.query, limit: opts.limit ?? 50 })
-      : await g.members.fetch({ limit: Math.min(opts.limit ?? 100, 1000) });
-    return Array.from(members.values()).map(serializeMember);
+    if (opts.query) {
+      const found = await g.members.search({ query: opts.query, limit: opts.limit ?? 50 });
+      return Array.from(found.values()).map(serializeMember);
+    }
+    // REST `List Guild Members` — `members.fetch({ limit })` would use a gateway
+    // opcode and requires a live session. Needs the GUILD_MEMBERS intent enabled
+    // in the Developer Portal (HTTP restriction, independent of gateway intents).
+    const limit = Math.min(Math.max(opts.limit ?? 100, 1), 1000);
+    const raw = (await client.rest.get(Routes.guildMembers(guildId), {
+      query: new URLSearchParams({ limit: String(limit) }),
+    })) as unknown[];
+    const add = (g.members as unknown as { _add: (d: unknown) => GuildMember })._add.bind(g.members);
+    return raw.map((d) => serializeMember(add(d)));
   } catch (err) {
     throw wrapDiscordError(err);
   }

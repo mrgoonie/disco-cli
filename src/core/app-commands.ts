@@ -4,6 +4,7 @@
 import { readFile } from "node:fs/promises";
 import type { Client, ApplicationCommandDataResolvable } from "discord.js";
 import { serializeAppCommand } from "./serialize.js";
+import { ensureApplication } from "./client.js";
 import { DiscoError, wrapDiscordError } from "./errors.js";
 
 async function readDefinitions(path: string): Promise<ApplicationCommandDataResolvable[]> {
@@ -14,6 +15,7 @@ async function readDefinitions(path: string): Promise<ApplicationCommandDataReso
 }
 
 export async function listAppCommands(client: Client<true>, guildId?: string) {
+  await ensureApplication(client);
   if (!client.application) {
     throw new DiscoError("RUNTIME", "Client.application not ready.");
   }
@@ -32,6 +34,7 @@ export async function registerAppCommand(
   filePath: string,
   guildId?: string,
 ) {
+  await ensureApplication(client);
   if (!client.application) {
     throw new DiscoError("RUNTIME", "Client.application not ready.");
   }
@@ -53,6 +56,7 @@ export async function deleteAppCommand(
   commandId: string,
   guildId?: string,
 ) {
+  await ensureApplication(client);
   if (!client.application) {
     throw new DiscoError("RUNTIME", "Client.application not ready.");
   }
@@ -69,6 +73,7 @@ export async function syncAppCommands(
   filePath: string,
   guildId?: string,
 ) {
+  await ensureApplication(client);
   if (!client.application) {
     throw new DiscoError("RUNTIME", "Client.application not ready.");
   }

@@ -9,6 +9,7 @@ export type ErrorCode =
   | "INVALID_INPUT"
   | "RATE_LIMITED"
   | "DISCORD_API"
+  | "GATEWAY_BUDGET_LOW"
   | "RUNTIME";
 
 export class DiscoError extends Error {
@@ -37,6 +38,8 @@ export function exitCodeFor(code: ErrorCode): number {
     case "RATE_LIMITED":
     case "DISCORD_API":
       return 3;
+    case "GATEWAY_BUDGET_LOW":
+      return 5;
     case "INVALID_INPUT":
     case "NOT_FOUND":
     case "PERMISSION_DENIED":

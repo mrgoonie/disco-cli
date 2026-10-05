@@ -10,6 +10,16 @@ export function registerListenCommand(root: Command): void {
     .command("listen")
     .description("Connect to the gateway and stream events as JSON lines until Ctrl-C")
     .option("--events <list>", "Comma-separated event names (default: common set)")
+    .option(
+      "--intents <list>",
+      "Extra gateway intents (GatewayIntentBits names), e.g. GuildMembers,GuildPresences",
+    )
+    .option(
+      "--min-session-starts <n>",
+      "Refuse to connect when fewer gateway session starts remain today",
+      (v) => parseInt(v, 10),
+      100,
+    )
     .action(async (opts) => {
       try {
         const cfg = loadConfig();
@@ -20,6 +30,10 @@ export function registerListenCommand(root: Command): void {
 
         const client = await startListener(token, {
           events,
+          extraIntents: opts.intents
+            ? String(opts.intents).split(",").map((s: string) => s.trim()).filter(Boolean)
+            : undefined,
+          minSessionStarts: opts.minSessionStarts,
           onReady: (info) => {
             const line = JSON.stringify({ event: "ready", at: new Date().toISOString(), ...info });
             process.stdout.write(line + "\n");

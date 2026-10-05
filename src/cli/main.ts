@@ -19,7 +19,7 @@ import { registerEventCommands } from "./commands/event.js";
 import { registerAutoModCommands } from "./commands/automod.js";
 import { registerListenCommand } from "./commands/listen.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
 
 const program = new Command();
 program

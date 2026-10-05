@@ -21,17 +21,23 @@ disco login           # reads token from stdin
 disco logout
 disco whoami
 disco doctor          # diagnostics: config layer, env, paths
+disco gateway-budget  # remaining gateway session starts (IDENTIFY) today
 disco config get
 disco config set defaultGuildId 1234567890
 ```
 
 ## Listen
 
-Streams gateway events as JSON lines.
+Streams gateway events as JSON lines. This is the only command that opens a
+gateway session (one IDENTIFY). It first checks `GET /gateway/bot` and refuses
+to connect (exit `5`) when fewer than `--min-session-starts` remain, because
+Discord resets the bot token when the daily 1000 IDENTIFY budget runs out.
+All other commands are REST-only and consume no IDENTIFY.
 
 ```bash
 disco listen
 disco listen --events messageCreate,interactionCreate > events.jsonl
+disco listen --intents GuildMembers --min-session-starts 200
 ```
 
 ## Guild

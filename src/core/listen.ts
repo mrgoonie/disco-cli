@@ -1,8 +1,10 @@
 // Long-running event tap. Streams gateway events to a callback.
 // Useful for debugging, scripting reactions to live activity.
 
-import { Events, type Client } from "discord.js";
-import { buildClient } from "./client.js";
+import { Events, GatewayIntentBits, type Client } from "discord.js";
+import { buildClient, DEFAULT_INTENTS } from "./client.js";
+import { DiscoError } from "./errors.js";
+import { assertSessionBudget, getGatewayBot, DEFAULT_MIN_SESSION_STARTS } from "./gateway.js";
 import { wrapDiscordError } from "./errors.js";
 
 export type EventName = keyof typeof Events | string;
@@ -11,6 +13,24 @@ export interface ListenOptions {
   events?: EventName[];
   onEvent: (eventName: string, payload: unknown) => void;
   onReady?: (info: { id: string; tag: string; guilds: number }) => void;
+  /** Extra intents by name (e.g. GuildMembers) added to DEFAULT_INTENTS. */
+  extraIntents?: string[];
+  /** Refuse to IDENTIFY when fewer session starts remain. Default 100. */
+  minSessionStarts?: number;
+}
+
+export function resolveIntents(extra: string[] = []): GatewayIntentBits[] {
+  const out = new Set<GatewayIntentBits>(DEFAULT_INTENTS);
+  for (const name of extra) {
+    const bit = (GatewayIntentBits as unknown as Record<string, GatewayIntentBits | undefined>)[name];
+    if (typeof bit !== "number") {
+      throw new DiscoError("INVALID_INPUT", `Unknown gateway intent: ${name}`, {
+        hint: "Use discord.js GatewayIntentBits names, e.g. GuildMembers,GuildPresences.",
+      });
+    }
+    out.add(bit);
+  }
+  return [...out];
 }
 
 const DEFAULT_EVENTS: EventName[] = [
@@ -31,7 +51,11 @@ const DEFAULT_EVENTS: EventName[] = [
 ];
 
 export async function startListener(token: string, opts: ListenOptions): Promise<Client> {
-  const client = buildClient();
+  const intents = resolveIntents(opts.extraIntents);
+  // Budget check is REST-only; it consumes no IDENTIFY.
+  assertSessionBudget(await getGatewayBot(token), opts.minSessionStarts ?? DEFAULT_MIN_SESSION_STARTS);
+
+  const client = buildClient({ intents });
   const events = opts.events && opts.events.length > 0 ? opts.events : DEFAULT_EVENTS;
 
   client.once(Events.ClientReady, (c) => {

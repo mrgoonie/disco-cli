@@ -19,6 +19,7 @@ This skill does NOT handle building custom Discord bots, implementing raw Discor
 3. Ask before destructive operations: delete channel/message/role/webhook/invite/emoji/sticker/event/automod rule, guild leave, kick, ban, timeout, unban, bulk command sync.
 4. Use `--json` for agent parsing and quote all user-generated text.
 5. Do not work around Discord permission, hierarchy, intent, or rate-limit failures.
+6. Only `listen` opens a gateway session (one IDENTIFY; Discord resets the token after 1000/24h). Never loop or cron `listen`; check `disco gateway-budget --json` first. For periodic scans use `message list <channelId> --after <lastSeenId>` and keep a cursor.
 
 ## Fast Workflow
 
@@ -48,7 +49,7 @@ This skill does NOT handle building custom Discord bots, implementing raw Discor
 4. Structure: `channel create/edit/delete`, `role create/edit/delete/assign/remove`, `thread create/list/archive/unarchive/join/leave`.
 5. App surface: `command list/register/delete/sync`, `event list/create/delete`.
 6. Media/community assets: `emoji list/create/delete`, `sticker list/create/delete`.
-7. Live diagnostics: `listen --events ...` streams JSON lines until interrupted.
+7. Live diagnostics: `listen --events ...` streams JSON lines until interrupted; it refuses to start (exit 5) when the gateway session budget is low.
 
 ## Output Contract
 
