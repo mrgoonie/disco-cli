@@ -9,6 +9,7 @@ import {
   userConfigPath,
 } from "../../core/config.js";
 import { withClient } from "../../core/client.js";
+import { getGatewayBot } from "../../core/gateway.js";
 import { runWithoutClient } from "../run.js";
 import { printResult } from "../output.js";
 import { DiscoError } from "../../core/errors.js";
@@ -63,7 +64,7 @@ export function registerAuthCommands(root: Command): void {
           id: client.user.id,
           tag: client.user.tag,
           username: client.user.username,
-          guilds: client.guilds.cache.size,
+          guilds: (await client.guilds.fetch()).size,
           source: cfg.source,
         }));
         printResult(info);
@@ -71,6 +72,23 @@ export function registerAuthCommands(root: Command): void {
         process.exitCode = 2;
         printResult({ authenticated: false, error: (err as Error).message });
       }
+    });
+
+  root
+    .command("gateway-budget")
+    .description(
+      "Show remaining gateway session starts (IDENTIFY) for today; Discord resets the token at 0",
+    )
+    .action(async () => {
+      await runWithoutClient(async () => {
+        const cfg = loadConfig();
+        if (!cfg.token) {
+          throw new DiscoError("AUTH_MISSING", "No token resolved.", {
+            hint: "Run `disco login` or set DISCORD_BOT_TOKEN.",
+          });
+        }
+        return getGatewayBot(cfg.token);
+      });
     });
 
   root

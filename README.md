@@ -35,6 +35,20 @@ disco automod list <guildId>
 disco listen --events messageCreate,guildMemberAdd
 ```
 
+## Gateway safety (token resets)
+
+Every command except `listen` is **REST-only**: it never opens a gateway
+session, so it never sends an IDENTIFY. Discord allows 1000 IDENTIFY calls per
+application per 24 hours and **resets the bot token** when that limit is hit,
+which is what happens if every short-lived command logs in to the gateway.
+
+- Run `disco gateway-budget` to see the remaining session starts for today.
+- `disco listen` checks that budget first and refuses to connect when fewer than
+  `--min-session-starts` (default 100) remain (exit code `5`).
+- Privileged intents are opt-in for `listen`: `--intents GuildMembers,GuildPresences`.
+- For polling, use `disco message list <channelId> --after <lastSeenId>` and
+  keep the last seen message ID, rather than re-reading history.
+
 ## Auth resolution
 
 First match wins:
@@ -58,12 +72,13 @@ Tokens are never logged. `disco doctor` shows which layer resolved the token.
   - `2` auth missing / invalid
   - `3` Discord API / rate limited
   - `4` runtime
+  - `5` gateway session budget too low (`listen` refused to connect)
 
 ## Command surface
 
 | Group     | Commands                                                                                |
 |-----------|-----------------------------------------------------------------------------------------|
-| Auth      | `login`, `logout`, `whoami`, `doctor`, `config get\|set`                                |
+| Auth      | `login`, `logout`, `whoami`, `doctor`, `gateway-budget`, `config get\|set`              |
 | Listen    | `listen`                                                                                |
 | Guild     | `guild list\|info\|leave\|edit`                                                         |
 | Channel   | `channel list\|info\|create\|edit\|delete`                                              |

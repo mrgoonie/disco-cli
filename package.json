@@ -1,6 +1,6 @@
 {
   "name": "@mrgoonie/disco-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Discord bot management CLI built on discord.js v14",
   "type": "module",
   "bin": {

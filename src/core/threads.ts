@@ -67,7 +67,7 @@ export async function listThreads(
 }
 
 async function fetchThread(client: Client<true>, threadId: string): Promise<ThreadChannel> {
-  const t = await client.channels.fetch(threadId).catch(() => null);
+  const t = await fetchChannelOrThrow(client, threadId).catch(() => null);
   if (!t || !t.isThread()) {
     throw new DiscoError("NOT_FOUND", `Thread ${threadId} not found.`);
   }
